@@ -1,0 +1,46 @@
+// https://madebymike.com.au/writing/precise-control-responsive-typography/
+// bootstrap 4: sm 576, md 768, lg 992, xl 1200
+
+@import '../functions/param';
+@import '../functions/strip-unit';
+
+@mixin fluidify($properties, $params: ())
+{
+	$params: map-merge((
+		min-size: 14px,
+		max-size: 36px,
+		min-width: 576px,
+		max-width: 1200px
+	), $params);
+
+	@if type-of($properties) != 'map'
+	{
+		$properties: ($properties);
+	}
+
+	$min-size: get-param('min-size', $params);
+	$max-size: get-param('max-size', $params);
+	$min-width: get-param('min-width', $params);
+	$max-width: get-param('max-width', $params);
+
+	@each $property in $properties
+	{
+		#{$property}: #{$min-size};
+	}
+
+	@media (min-width: $min-width) and (max-width: $max-width - 1px)
+	{
+		@each $property in $properties
+		{
+			#{$property}: calc(#{$min-size} + (#{strip-unit($max-size)} - #{strip-unit($min-size)}) * ((100vw - #{$min-width}) / (#{strip-unit($max-width)} - #{strip-unit($min-width)})));
+		}
+	}
+
+	@media (min-width: $max-width)
+	{
+		@each $property in $properties
+		{
+			#{$property}: $max-size;
+		}
+	}
+}

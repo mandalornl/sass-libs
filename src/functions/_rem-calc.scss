@@ -1,0 +1,62 @@
+// https://github.com/zurb/foundation-sites/blob/develop/scss/util/_unit.scss
+
+@import 'strip-unit';
+
+$rem-calc-base: 14px !default;
+
+@function _value-to-rem($value, $base: $rem-calc-base)
+{
+	@if type-of($value) != 'number'
+	{
+		@error '`#{inspect($value)}` was passed to rem-calc(), which is not a number.';
+	}
+
+	@if unit($value) == 'em'
+	{
+		$value: strip-unit($value) * 1rem;
+	}
+	@else
+	{
+		@if unit($value) != 'rem'
+		{
+			$value: strip-unit($value) / strip-unit($base) * 1rem;
+		}
+	}
+
+	@if $value == 0rem
+	{
+		@return 0;
+	}
+
+	@return $value;
+}
+
+@function rem-calc($values, $base: $rem-calc-base)
+{
+	$rem-values: ();
+	$length: length($values);
+
+	@if unit($base) == '%'
+	{
+		$base: ($base / 100%) * 16px;
+	}
+	@else
+	{
+		@if unit($base) == 'rem'
+		{
+			$base: strip-unit($base) * 16px;
+		}
+	}
+
+	@if $length == 1
+	{
+		@return _value-to-rem($values, $base);
+	}
+
+	@for $i from 1 through $length
+	{
+		$rem-values: append($rem-values, _value-to-rem(nth($values, $i), $base));
+	}
+
+	@return $rem-values;
+}

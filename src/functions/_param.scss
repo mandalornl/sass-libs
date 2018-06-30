@@ -1,0 +1,26 @@
+@function get-param($name, $collection, $default: false)
+{
+	@if type-of($collection) != 'map'
+	{
+		@error 'Collection has to be of type `map`';
+	}
+
+	@if not map-has-key($collection, $name)
+	{
+		@if ($default != false)
+		{
+			@return $default;
+		}
+
+		@error 'Unknown `#{$name}` in `#{$collection}`';
+	}
+
+	$value: map-get($collection, $name);
+
+	@if type-of($value) == 'string' and map-has-key($collection, $value)
+	{
+		@return map-get($collection, $value);
+	}
+
+	@return $value;
+}
